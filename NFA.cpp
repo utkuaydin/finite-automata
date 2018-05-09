@@ -30,9 +30,79 @@ bool NFA::accepts(string str) {
 
     currentStates.clear();
     //TODO implement accepts!
+    vector<int> t, p;
+    unsigned long current = 0;
 
-    cout << "Not implemented! accepts" << endl;
-    exit(-1);
+    while (true) {
+        p.push_back(initialState);
+
+        do {
+            t = p;
+
+            for (int i : p) {
+                for (int j : epsilonClosure(i)) {
+                    p.push_back(j);
+                }
+            }
+        } while (t != p);
+
+        vector<int> intersection;
+
+        for (int i : t) {
+            for (int j : acceptStates) {
+                if (i == j) {
+                    intersection.push_back(i);
+                }
+            }
+        }
+
+        if (intersection.empty()) {
+            break;
+        }
+
+        if (current >= str.length()) {
+            break;
+        }
+
+        char character = str[current];
+        t.clear();
+
+        for (int i : p) {
+            for (Edge transition : transitions) {
+                if (transition.getSourceState() == i && transition.getSymbol() == character) {
+                    t.push_back(transition.getDestinationState());
+                }
+            }
+        }
+
+        intersection.clear();
+
+        for (int i : t) {
+            for (int j : acceptStates) {
+                if (i == j) {
+                    intersection.push_back(i);
+                }
+            }
+        }
+
+        if (intersection.empty()) {
+            break;
+        }
+
+        p = t;
+    }
+
+    vector<int> intersection;
+
+    for (int i : t) {
+        for (int j : acceptStates) {
+            if (i == j) {
+                intersection.push_back(i);
+            }
+        }
+    }
+
+    return !intersection.empty();
 }
 
 vector<int> NFA::epsilonClosure(int state) {
