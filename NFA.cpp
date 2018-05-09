@@ -105,17 +105,36 @@ NFA NFA::unionOfNFAs(NFA &nfa1, NFA &nfa2) {
 }
 
 NFA NFA::concatenate(NFA &nfa1, NFA &nfa2) {
-    NFA result;
+    vector<int> allStates;
+    vector<int> acceptStates;
+    vector<Edge> transitions;
+
+    for (int state : nfa1.allStates) {
+        allStates.push_back(state);
+    }
+
+    for (int state : nfa2.allStates) {
+        allStates.push_back(state);
+    }
+
+    for (Edge transition : nfa1.transitions) {
+        transitions.push_back(transition);
+    }
+
+    for (Edge transition : nfa2.transitions) {
+        transitions.push_back(transition);
+    }
 
     for (int state : nfa1.acceptStates) {
         Edge transition = Edge::epsilonTransition(state, nfa2.initialState);
+        transitions.push_back(transition);
     }
 
-    vector<int> allStates = {};
-
-    for (int state : nfa1.allStates) {
-
+    for (int state : nfa2.acceptStates) {
+        acceptStates.push_back(state);
     }
+
+    return NFA(nfa1.initialState, allStates, acceptStates, transitions);
 }
 
 NFA NFA::star(NFA &nfa) {
