@@ -69,6 +69,42 @@ NFA NFA::singleSymbol(char c) {
 }
 
 NFA NFA::unionOfNFAs(NFA &nfa1, NFA &nfa2) {
+    int initialState = NFA::newState();
+    Edge firstTransition = Edge::epsilonTransition(initialState, nfa1.initialState);
+    Edge secondTransition = Edge::epsilonTransition(initialState, nfa2.initialState);
+
+    vector<int> allStates = {initialState};
+    vector<int> acceptStates;
+    vector<Edge> transitions = {firstTransition, secondTransition};
+
+    for (int state : nfa1.allStates) {
+        allStates.push_back(state);
+    }
+
+    for (int state : nfa2.allStates) {
+        allStates.push_back(state);
+    }
+
+    for (int state : nfa1.acceptStates) {
+        acceptStates.push_back(state);
+    }
+
+    for (int state : nfa2.acceptStates) {
+        acceptStates.push_back(state);
+    }
+
+    for (Edge transition : nfa1.transitions) {
+        transitions.push_back(transition);
+    }
+
+    for (Edge transition : nfa2.transitions) {
+        transitions.push_back(transition);
+    }
+
+    return NFA(initialState, allStates, acceptStates, transitions);
+}
+
+NFA NFA::concatenate(NFA &nfa1, NFA &nfa2) {
     NFA result;
 
     for (int state : nfa1.acceptStates) {
@@ -80,17 +116,6 @@ NFA NFA::unionOfNFAs(NFA &nfa1, NFA &nfa2) {
     for (int state : nfa1.allStates) {
 
     }
-
-    //TODO implement unionOfNFAs!
-    //since we can't use keyword 'union' in C++, it was renamed to unionOfNFAs.
-    cout << "Not implemented! unionOfNFAs" << endl;
-    exit(-1);
-}
-
-NFA NFA::concatenate(NFA &nfa1, NFA &nfa2) {
-    //TODO implement concatenate!
-    cout << "Not implemented! concatenate" << endl;
-    exit(-1);
 }
 
 NFA NFA::star(NFA &nfa) {
