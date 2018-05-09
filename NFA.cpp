@@ -140,9 +140,30 @@ NFA NFA::concatenate(NFA &nfa1, NFA &nfa2) {
 }
 
 NFA NFA::star(NFA &nfa) {
-    //TODO implement star!
-    cout << "Not implemented! star" << endl;
-    exit(-1);
+    vector<int> allStates;
+    vector<int> acceptStates;
+    vector<Edge> transitions;
+
+    for (int state : nfa.allStates) {
+        allStates.push_back(state);
+    }
+
+    for (int state : nfa.acceptStates) {
+        Edge transition = Edge::epsilonTransition(state, nfa.initialState);
+        transitions.push_back(transition);
+        acceptStates.push_back(state);
+    }
+
+    for (Edge transition : nfa.transitions) {
+        transitions.push_back(transition);
+    }
+
+    int initialState = NFA::newState();
+    Edge transition = Edge::epsilonTransition(initialState, nfa.initialState);
+    transitions.push_back(transition);
+    acceptStates.push_back(initialState);
+
+    return NFA(initialState, allStates, acceptStates, transitions);
 }
 
 void printVector(const vector<int> &a) {
