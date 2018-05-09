@@ -36,13 +36,15 @@ bool NFA::accepts(string str) {
 }
 
 vector<int> NFA::epsilonClosure(int state) {
-    //finds the set of states that are in epsilon closure of given 'state' within
-    //this automaton. (set of states that can be reached from 'state' using
-    //epsilon transitions)
+    vector<int> states;
 
-    //TODO implement kleeneClosure!
-    cout << "Not implemented! kleeneClosure" << endl;
-    exit(-1);
+    for (Edge transition : transitions) {
+        if (transition.isEpsilonTransition() && transition.getSourceState() == state) {
+            states.push_back(transition.getDestinationState());
+        }
+    }
+
+    return states;
 }
 
 NFA NFA::singleSymbol(char c) {
