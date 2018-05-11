@@ -30,7 +30,7 @@ void NFA::print() {
 bool NFA::accepts(string str) {
     //checks whether this automaton accepts 's'. Implement this method
     //using given algorithm in project document.
-	/*
+	
     currentStates.clear();
     //TODO implement accepts!
     vector<int> t, p;
@@ -105,10 +105,7 @@ bool NFA::accepts(string str) {
         }
     }
 	
-    return !intersection.empty();
-	*/
-	return currentStates.empty();
-	
+    return !intersection.empty();	
 }
 
 vector<int> NFA::epsilonClosure(int state) {
