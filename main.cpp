@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
 
 
 
-    testInfixToPostfix();
-    test();
+    InfixToPostfixConverter converter = testInfixToPostfix(testing);
+    test(converter.getPosfixExpression());
 }
 

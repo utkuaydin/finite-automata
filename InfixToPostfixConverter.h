@@ -34,7 +34,7 @@ private:
 };
 
 
-void testInfixToPostfix();
+InfixToPostfixConverter testInfixToPostfix(string stringToPostFix);
 
 #endif    /* INFIXTOPOSTFIXCONVERTER_H */
 

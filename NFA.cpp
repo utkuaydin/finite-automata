@@ -1,7 +1,10 @@
 #include <stdlib.h>
 #include <iostream>
-
+#include <string>
+#include <stack>
 #include "NFA.h"
+
+using namespace std;
 
 int NFA::stateIDsource = 0;
 
@@ -27,7 +30,7 @@ void NFA::print() {
 bool NFA::accepts(string str) {
     //checks whether this automaton accepts 's'. Implement this method
     //using given algorithm in project document.
-
+	/*
     currentStates.clear();
     //TODO implement accepts!
     vector<int> t, p;
@@ -101,8 +104,11 @@ bool NFA::accepts(string str) {
             }
         }
     }
-
+	
     return !intersection.empty();
+	*/
+	return currentStates.empty();
+	
 }
 
 vector<int> NFA::epsilonClosure(int state) {
@@ -149,6 +155,7 @@ NFA NFA::unionOfNFAs(NFA &nfa1, NFA &nfa2) {
     vector<int> acceptStates;
     vector<Edge> transitions = {firstTransition, secondTransition};
 
+	
     for (int state : nfa1.allStates) {
         allStates.push_back(state);
     }
@@ -244,15 +251,45 @@ void printVector(const vector<int> &a) {
     cout << a.back() << ']' << endl;
 }
 
-void test() {
+void test(string postFixString) {
     cout << "Testing..." << endl;
     cout << endl;
     cout << "Trying to construct automaton that recognizes: " << endl;
     cout << "(a|b)*abb" << endl;
 
+	stack<NFA> resultNFA;
+	int index = 0;
+
+	while (index < postFixString.length()) {
+		char character = postFixString[index];
+		if (character == '&') {
+			NFA nfa2 = resultNFA.top();
+			resultNFA.pop();
+			NFA nfa1 = resultNFA.top();
+			resultNFA.pop();
+			resultNFA.push(NFA::concatenate(nfa1, nfa2));
+		}
+		else if (character == '|'){
+			NFA nfa2 = resultNFA.top();
+			resultNFA.pop();
+			NFA nfa1 = resultNFA.top();
+			resultNFA.pop();
+			resultNFA.push(NFA::unionOfNFAs(nfa1, nfa2));
+		}
+		else if (character == '*') {
+			NFA nfa = resultNFA.top();
+			resultNFA.pop();
+			resultNFA.push(NFA::star(nfa));
+		}
+		else {
+			resultNFA.push(NFA::singleSymbol(character));
+		}
+		index++;
+	}
     // ab|*a&b&b&
 
-    NFA a = NFA::singleSymbol('a');
+    /*
+	NFA a = NFA::singleSymbol('a');
     NFA b = NFA::singleSymbol('b');
     NFA un = NFA::unionOfNFAs(a, b);
     NFA star = NFA::star(un);
@@ -265,10 +302,11 @@ void test() {
     NFA abb = NFA::concatenate(ab, lastB);
 
     NFA result = NFA::concatenate(star, abb);
+	*/
 
-    string testString = "aababb";
+    string testString = "aabab";
 
-    if (result.accepts(testString)) {
+    if (resultNFA.top().accepts(testString)) {
         cout << "NFA accepts " << testString << endl;
     } else {
         cout << "NFA did not accept " << testString << endl;
@@ -277,6 +315,6 @@ void test() {
 
     cout << "All tests passed!" << endl;
     cout << "Here is the resulting NFA: " << endl;
-    result.print();
+	resultNFA.top().print();
 
 }

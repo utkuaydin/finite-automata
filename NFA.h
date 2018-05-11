@@ -47,7 +47,7 @@ private:
 
 void printVector(const vector<int> &);
 
-void test();
+void test(string postFixString);
 
 #endif    /* NFA_H */
 

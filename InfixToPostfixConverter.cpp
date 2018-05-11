@@ -62,10 +62,11 @@ void InfixToPostfixConverter::fatal(const char *message) {
     exit(-1);
 }
 
-void testInfixToPostfix() {
+InfixToPostfixConverter testInfixToPostfix(string stringToPostFix) {
     //example
     // InfixToPostfixConverter converter("((a|b)*aba*)");
     // cout << converter.getPosfixExpression() << endl;
-    InfixToPostfixConverter converter("(a|b)*abb");
+    InfixToPostfixConverter converter(stringToPostFix);
     cout << converter.getPosfixExpression() << endl;
+	return converter;
 }
