@@ -1,6 +1,30 @@
 # Regular Expression Engine
 
-Final project for Formal Languages and Automata Theory (CMP3004) course.
+Final project for Formal Languages and Automata Theory (CMP3004) course, by Utku Aydın and Ömer Buğra Selvi.
+
+## Design and Implementation
+
+In `main.cpp`, the program reads two arguments: the filename and the regular expression. Then `Engine::createNFA()` first
+converts the given expression to a postfix expression and then constructs a NFA by parsing it. After the NFA is constructed
+then the program reads every line in the input file and checks if the any string sequence that's accepted by the NFA exists
+in the line.
+
+### NFA construction
+
+Construction of NFA is done by using a stack. After reading each character of the postfix expression, a new NFA is created
+by simply running NFA class' relevant operation method.
+
+### Regular expression evaluation
+
+`NFA::accepts()` method returns true whenver given string has a substring that adheres to the given regular expression. The
+algorithm starts by finding which states which we can transition into from the inital state. First, it finds epsilon
+transitions, then it finds all states we can transition into by using the currently evaluated character. If all goes well,
+and we arrive into any final state, `NFA::accepts()` returns true.
+
+### Tests
+
+We used Fyodor Dostoevsky's Crime and Punishment, The Brothers Karamazov and The Idiot books for testing our program. Results
+can be found at sample outputs section.
 
 ## Execution
 
