@@ -145,30 +145,15 @@ NFA NFA::singleSymbol(char c) {
 }
 
 NFA NFA::unionOfNFAs(NFA &nfa1, NFA &nfa2) {
+    // In order to make a union, first create a new initial state and then create
+    // epsilon transitions to other NFAs' initial states.
+
     int initialState = NFA::newState();
     Edge firstTransition = Edge::epsilonTransition(initialState, nfa1.initialState);
     Edge secondTransition = Edge::epsilonTransition(initialState, nfa2.initialState);
 
-    vector<int> allStates = {initialState};
-    vector<int> acceptStates;
-
+    // Add our new transitions to NFA's transition set and copy the rest.
     vector<Edge> transitions = {firstTransition, secondTransition};
-
-    for (int state : nfa1.allStates) {
-        allStates.push_back(state);
-    }
-
-    for (int state : nfa2.allStates) {
-        allStates.push_back(state);
-    }
-
-    for (int state : nfa1.acceptStates) {
-        acceptStates.push_back(state);
-    }
-
-    for (int state : nfa2.acceptStates) {
-        acceptStates.push_back(state);
-    }
 
     for (Edge transition : nfa1.transitions) {
         transitions.push_back(transition);
@@ -178,6 +163,29 @@ NFA NFA::unionOfNFAs(NFA &nfa1, NFA &nfa2) {
         transitions.push_back(transition);
     }
 
+    // Add our new initial state to our NFA's state set.
+    vector<int> allStates = {initialState};
+
+    for (int state : nfa1.allStates) {
+        allStates.push_back(state);
+    }
+
+    for (int state : nfa2.allStates) {
+        allStates.push_back(state);
+    }
+
+    // Copy all accepted states.
+    vector<int> acceptStates;
+
+    for (int state : nfa1.acceptStates) {
+        acceptStates.push_back(state);
+    }
+
+    for (int state : nfa2.acceptStates) {
+        acceptStates.push_back(state);
+    }
+
+    // Create a new NFA.
     return NFA(initialState, allStates, acceptStates, transitions);
 }
 
