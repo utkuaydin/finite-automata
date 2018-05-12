@@ -2,14 +2,14 @@
 #include <iostream>
 #include <string>
 #include <stack>
+#include <set>
 #include "NFA.h"
 
 using namespace std;
 
-int NFA::stateIDsource = 0;
+int NFA::stateId = 0;
 
-NFA::NFA() {
-}
+NFA::NFA() = default;
 
 NFA::NFA(int initialState, vector<int> allStates, vector<int> acceptStates, vector<Edge> transitions) {
     this->initialState = initialState;
@@ -19,9 +19,10 @@ NFA::NFA(int initialState, vector<int> allStates, vector<int> acceptStates, vect
 }
 
 void NFA::print() {
-    cout << "States : " << endl;
+    cout << "States: " << endl;
     printVector(allStates);
-    cout << "Transitions : " << endl;
+    cout << "Transitions: " << endl;
+
     for (int i = 0; i < transitions.size(); ++i) {
         transitions[i].print();
     }
@@ -30,28 +31,28 @@ void NFA::print() {
 bool NFA::accepts(string str) {
     //checks whether this automaton accepts 's'. Implement this method
     //using given algorithm in project document.
-	
-    currentStates.clear();
-    //TODO implement accepts!
-    vector<int> t, p;
+
+    set<int> nextStates, temp;
     unsigned long current = 0;
 
     while (true) {
-        p.push_back(initialState);
+        nextStates.insert(initialState);
 
         do {
-            t = p;
+            temp = nextStates;
 
-            for (int i : p) {
-                for (int j : epsilonClosure(i)) {
-                    p.push_back(j);
+            for (int i : nextStates) {
+                const vector<int> &closure = epsilonClosure(i);
+
+                for (int j : closure) {
+                    nextStates.insert(j);
                 }
             }
-        } while (t != p);
+        } while (temp != nextStates);
 
         vector<int> intersection;
 
-        for (int i : t) {
+        for (int i : temp) {
             for (int j : acceptStates) {
                 if (i == j) {
                     intersection.push_back(i);
@@ -59,7 +60,7 @@ bool NFA::accepts(string str) {
             }
         }
 
-        if (intersection.empty()) {
+        if (!intersection.empty()) {
             break;
         }
 
@@ -67,20 +68,20 @@ bool NFA::accepts(string str) {
             break;
         }
 
-        char character = str[current];
-        t.clear();
+        char character = str[current++];
+        temp.clear();
 
-        for (int i : p) {
+        for (int i : nextStates) {
             for (Edge transition : transitions) {
                 if (transition.getSourceState() == i && transition.getSymbol() == character) {
-                    t.push_back(transition.getDestinationState());
+                    temp.insert(transition.getDestinationState());
                 }
             }
         }
 
         intersection.clear();
 
-        for (int i : t) {
+        for (int i : temp) {
             for (int j : acceptStates) {
                 if (i == j) {
                     intersection.push_back(i);
@@ -88,24 +89,24 @@ bool NFA::accepts(string str) {
             }
         }
 
-        if (intersection.empty()) {
+        if (!intersection.empty()) {
             break;
         }
 
-        p = t;
+        nextStates = temp;
     }
 
     vector<int> intersection;
 
-    for (int i : t) {
+    for (int i : temp) {
         for (int j : acceptStates) {
             if (i == j) {
                 intersection.push_back(i);
             }
         }
     }
-	
-    return !intersection.empty();	
+
+    return !intersection.empty();
 }
 
 vector<int> NFA::epsilonClosure(int state) {
@@ -124,22 +125,22 @@ NFA NFA::singleSymbol(char c) {
     int initialState = NFA::newState();
     int finalState = NFA::newState();
 
-    //we have just two states here
+    // We have just two states here.
     vector<int> allStates;
     allStates.push_back(initialState);
     allStates.push_back(finalState);
 
-    //there is a single accept state,
+    // There is a single accept state,
     vector<int> acceptStates;
     acceptStates.push_back(finalState);
 
-    //there is a single transition in this automaton, which takes initial state
-    //to final state if input is given as the same as 'symbol' variable.
+    // There is a single transition in this automaton, which takes initial state
+    // to final state if input is given as the same as 'symbol' variable.
     Edge onlyOneTransition(initialState, finalState, c);
     vector<Edge> transitions;
     transitions.push_back(onlyOneTransition);
 
-    //create an NFA with such properties.
+    // Create an NFA with such properties.
     return NFA(initialState, allStates, acceptStates, transitions);
 }
 
@@ -150,9 +151,9 @@ NFA NFA::unionOfNFAs(NFA &nfa1, NFA &nfa2) {
 
     vector<int> allStates = {initialState};
     vector<int> acceptStates;
+
     vector<Edge> transitions = {firstTransition, secondTransition};
 
-	
     for (int state : nfa1.allStates) {
         allStates.push_back(state);
     }
@@ -254,54 +255,34 @@ void test(string postFixString) {
     cout << "Trying to construct automaton that recognizes: " << endl;
     cout << "(a|b)*abb" << endl;
 
-	stack<NFA> resultNFA;
-	int index = 0;
+    stack<NFA> resultNFA;
+    int index = 0;
 
-	while (index < postFixString.length()) {
-		char character = postFixString[index];
-		if (character == '&') {
-			NFA nfa2 = resultNFA.top();
-			resultNFA.pop();
-			NFA nfa1 = resultNFA.top();
-			resultNFA.pop();
-			resultNFA.push(NFA::concatenate(nfa1, nfa2));
-		}
-		else if (character == '|'){
-			NFA nfa2 = resultNFA.top();
-			resultNFA.pop();
-			NFA nfa1 = resultNFA.top();
-			resultNFA.pop();
-			resultNFA.push(NFA::unionOfNFAs(nfa1, nfa2));
-		}
-		else if (character == '*') {
-			NFA nfa = resultNFA.top();
-			resultNFA.pop();
-			resultNFA.push(NFA::star(nfa));
-		}
-		else {
-			resultNFA.push(NFA::singleSymbol(character));
-		}
-		index++;
-	}
-    // ab|*a&b&b&
+    while (index < postFixString.length()) {
+        char character = postFixString[index++];
 
-    /*
-	NFA a = NFA::singleSymbol('a');
-    NFA b = NFA::singleSymbol('b');
-    NFA un = NFA::unionOfNFAs(a, b);
-    NFA star = NFA::star(un);
+        if (character == '&') {
+            NFA nfa2 = resultNFA.top();
+            resultNFA.pop();
+            NFA nfa1 = resultNFA.top();
+            resultNFA.pop();
+            resultNFA.push(NFA::concatenate(nfa1, nfa2));
+        } else if (character == '|') {
+            NFA nfa2 = resultNFA.top();
+            resultNFA.pop();
+            NFA nfa1 = resultNFA.top();
+            resultNFA.pop();
+            resultNFA.push(NFA::unionOfNFAs(nfa1, nfa2));
+        } else if (character == '*') {
+            NFA nfa = resultNFA.top();
+            resultNFA.pop();
+            resultNFA.push(NFA::star(nfa));
+        } else {
+            resultNFA.push(NFA::singleSymbol(character));
+        }
+    }
 
-    NFA anotherA = NFA::singleSymbol('a');
-    NFA anotherB = NFA::singleSymbol('b');
-    NFA lastB = NFA::singleSymbol('b');
-
-    NFA ab = NFA::concatenate(anotherA, anotherB);
-    NFA abb = NFA::concatenate(ab, lastB);
-
-    NFA result = NFA::concatenate(star, abb);
-	*/
-
-    string testString = "aabab";
+    string testString = "abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbababb";
 
     if (resultNFA.top().accepts(testString)) {
         cout << "NFA accepts " << testString << endl;
@@ -312,6 +293,6 @@ void test(string postFixString) {
 
     cout << "All tests passed!" << endl;
     cout << "Here is the resulting NFA: " << endl;
-	resultNFA.top().print();
+    resultNFA.top().print();
 
 }

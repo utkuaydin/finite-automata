@@ -17,9 +17,7 @@ public:
 
     void print();
 
-    // Every new state must have distinct ID, so increment the ID generator
-    // each time you need a new one.
-    inline static int newState() { return stateIDsource++; }
+    inline static int newState() { return stateId++; }
 
     static NFA singleSymbol(char c);
 
@@ -29,7 +27,7 @@ public:
 
     static NFA star(NFA &);
 private:
-    static int stateIDsource;
+    static int stateId;
 
     NFA(int, vector<int>, vector<int>, vector<Edge>);
 
