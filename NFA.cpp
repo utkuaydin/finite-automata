@@ -231,6 +231,7 @@ NFA NFA::concatenate(NFA &nfa1, NFA &nfa2) {
 }
 
 NFA NFA::star(NFA &nfa) {
+    // Copy all states and transitions.
     vector<int> allStates;
     vector<int> acceptStates;
     vector<Edge> transitions;
@@ -240,6 +241,7 @@ NFA NFA::star(NFA &nfa) {
     }
 
     for (int state : nfa.acceptStates) {
+        // Connect all accepted states to NFA's initial state via an epsilon transition.
         Edge transition = Edge::epsilonTransition(state, nfa.initialState);
         transitions.push_back(transition);
         acceptStates.push_back(state);
@@ -249,11 +251,15 @@ NFA NFA::star(NFA &nfa) {
         transitions.push_back(transition);
     }
 
+    // Create a new initial state.
     int initialState = NFA::newState();
+
+    // Connect our new initial state to given NFA's initial state via epsilon transition.
     Edge transition = Edge::epsilonTransition(initialState, nfa.initialState);
     transitions.push_back(transition);
     acceptStates.push_back(initialState);
 
+    // Return our newly created NFA.
     return NFA(initialState, allStates, acceptStates, transitions);
 }
 
