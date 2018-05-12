@@ -38,7 +38,5 @@ private:
     vector<Edge> transitions;
 };
 
-void printVector(const vector<int> &);
-
 #endif // NFA_H
 

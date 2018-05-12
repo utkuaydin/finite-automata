@@ -18,7 +18,16 @@ NFA::NFA(int initialState, vector<int> allStates, vector<int> acceptStates, vect
 
 void NFA::print() {
     cout << "States: " << endl;
-    printVector(allStates);
+    const vector<int> &states = allStates;
+
+    cout << '[';
+
+    for (int i = 0; i < states.size() - 1; ++i) {
+        cout << states[i] << ", ";
+    }
+
+    cout << states.back() << ']' << endl;
+
     cout << "Transitions: " << endl;
 
     for (Edge &transition : transitions) {
@@ -273,12 +282,3 @@ NFA NFA::star(NFA &nfa) {
     // Return our newly created NFA.
     return NFA(initialState, allStates, acceptStates, transitions);
 }
-
-void printVector(const vector<int> &a) {
-    cout << '[';
-    for (int i = 0; i < a.size() - 1; ++i) {
-        cout << a[i] << ", ";
-    }
-    cout << a.back() << ']' << endl;
-}
-
