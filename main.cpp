@@ -11,6 +11,8 @@ int main(int argc, char **argv) {
     Engine engine;
     NFA nfa = engine.createNFA(argv[1]);
 
+    cout << "Expression: " << argv[1] << endl;
+
     cout << "The following NFA was built:" << endl;
     nfa.print();
 
