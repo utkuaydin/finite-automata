@@ -36,6 +36,8 @@ private:
     vector<int> acceptStates;
 
     vector<Edge> transitions;
+
+    void printVector(const vector<int> &vector) const;
 };
 
 #endif // NFA_H

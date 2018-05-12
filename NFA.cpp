@@ -17,22 +17,30 @@ NFA::NFA(int initialState, vector<int> allStates, vector<int> acceptStates, vect
 }
 
 void NFA::print() {
-    cout << "States: " << endl;
-    const vector<int> &states = allStates;
+    cout << "Initial State: " << endl;
+    cout << initialState << endl;
 
-    cout << '[';
+    cout << "All States: " << endl;
+    printVector(allStates);
 
-    for (int i = 0; i < states.size() - 1; ++i) {
-        cout << states[i] << ", ";
-    }
-
-    cout << states.back() << ']' << endl;
+    cout << "Accepted States: " << endl;
+    printVector(acceptStates);
 
     cout << "Transitions: " << endl;
 
     for (Edge &transition : transitions) {
         transition.print();
     }
+}
+
+void NFA::printVector(const vector<int> &vector) const {
+    cout << '[';
+
+    for (int i = 0; i < vector.size() - 1; ++i) {
+        cout << vector[i] << ", ";
+    }
+
+    cout << vector.back() << ']' << endl;
 }
 
 bool NFA::accepts(string str) {
