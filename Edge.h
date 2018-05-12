@@ -1,5 +1,5 @@
 #ifndef EDGE_H
-#define    EDGE_H
+#define EDGE_H
 
 #include <iostream>
 
@@ -29,9 +29,9 @@ private:
     int destinationState;
     char symbol;
 
-    //instead of epsilon we have $, because epsilon is not in ascii table...
+    // Instead of epsilon sign we have $, because epsilon is not in ASCII table.
     static const char EPSILON = '$';
 
 };
 
-#endif    /* EDGE_H */
+#endif // EDGE_H

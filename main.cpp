@@ -2,18 +2,17 @@
 
 #include "NFA.h"
 #include "InfixToPostfixConverter.h"
+#include "Engine.h"
 
 using namespace std;
 
-/*
- * 
- */
 int main(int argc, char **argv) {
-    string testing = "(a|b)*abb";
+    string expression = "(a|b)*abb";
 
+    Engine engine;
+    NFA nfa = engine.createNFA(expression);
 
-
-    InfixToPostfixConverter converter = testInfixToPostfix(testing);
-    test(converter.getPosfixExpression());
+    bool result = nfa.accepts("aaaaaaabbbbbbb");
+    return 0;
 }
 

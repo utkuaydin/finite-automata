@@ -13,4 +13,4 @@ add_executable(RegexEngine
         main.cpp
         Makefile
         NFA.cpp
-        NFA.h)
+        NFA.h Engine.cpp Engine.h)
