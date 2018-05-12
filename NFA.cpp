@@ -190,9 +190,10 @@ NFA NFA::unionOfNFAs(NFA &nfa1, NFA &nfa2) {
 }
 
 NFA NFA::concatenate(NFA &nfa1, NFA &nfa2) {
-    vector<int> allStates;
     vector<int> acceptStates;
-    vector<Edge> transitions;
+
+    // Copy all states.
+    vector<int> allStates;
 
     for (int state : nfa1.allStates) {
         allStates.push_back(state);
@@ -202,6 +203,9 @@ NFA NFA::concatenate(NFA &nfa1, NFA &nfa2) {
         allStates.push_back(state);
     }
 
+    // Copy all transitions.
+    vector<Edge> transitions;
+
     for (Edge transition : nfa1.transitions) {
         transitions.push_back(transition);
     }
@@ -210,15 +214,19 @@ NFA NFA::concatenate(NFA &nfa1, NFA &nfa2) {
         transitions.push_back(transition);
     }
 
+    // Connect every accepted state of the first machine to the initial state
+    // of the second one.
     for (int state : nfa1.acceptStates) {
         Edge transition = Edge::epsilonTransition(state, nfa2.initialState);
         transitions.push_back(transition);
     }
 
+    // Second machine's accepted states will be our new machine's accepted states.
     for (int state : nfa2.acceptStates) {
         acceptStates.push_back(state);
     }
 
+    // First machine's initial state will be our new machine's initial state.
     return NFA(nfa1.initialState, allStates, acceptStates, transitions);
 }
 
