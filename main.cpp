@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <fstream>
 
 #include "NFA.h"
 #include "InfixToPostfixConverter.h"
@@ -7,12 +8,26 @@
 using namespace std;
 
 int main(int argc, char **argv) {
-    string expression = "(a|b)*abb";
-
     Engine engine;
-    NFA nfa = engine.createNFA(expression);
+    NFA nfa = engine.createNFA(argv[1]);
 
-    bool result = nfa.accepts("aaaaaaabbbbbbb");
+    cout << "The following NFA was built:" << endl;
+    nfa.print();
+
+    ifstream inputFile(argv[2]);
+    unsigned int lineCount = 1;
+    string line;
+
+    while (getline(inputFile, line)) {
+        bool accepts = nfa.accepts(line);
+
+        if (accepts) {
+            cout << "Accepted, line " << lineCount << ": " << line << endl;
+        }
+
+        lineCount++;
+    }
+
     return 0;
 }
 
