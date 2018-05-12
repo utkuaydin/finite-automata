@@ -9,15 +9,9 @@ using namespace std;
 class NFA {
 
 public:
-    NFA();
-
-    bool accepts(string);
+    inline static int newState() { return stateId++; }
 
     vector<int> epsilonClosure(int);
-
-    void print();
-
-    inline static int newState() { return stateId++; }
 
     static NFA singleSymbol(char c);
 
@@ -26,10 +20,14 @@ public:
     static NFA concatenate(NFA &, NFA &);
 
     static NFA star(NFA &);
-private:
-    static int stateId;
 
+    bool accepts(string);
+
+    void print();
+private:
     NFA(int, vector<int>, vector<int>, vector<Edge>);
+
+    static int stateId;
 
     int initialState;
 
@@ -38,14 +36,9 @@ private:
     vector<int> acceptStates;
 
     vector<Edge> transitions;
-
-    vector<int> currentStates;
-
 };
 
 void printVector(const vector<int> &);
 
-void test(string postFixString);
-
-#endif    /* NFA_H */
+#endif // NFA_H
 

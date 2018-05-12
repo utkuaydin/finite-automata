@@ -4,7 +4,7 @@
 
 NFA Engine::createNFA(const string &expression) {
     InfixToPostfixConverter converter(expression);
-    const string &convertedExpression = converter.getPosfixExpression();
+    const string &convertedExpression = converter.getPostfixExpression();
     stack<NFA> stack;
     
     for (char character : convertedExpression) {

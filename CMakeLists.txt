@@ -5,12 +5,4 @@ set(CMAKE_CXX_STANDARD 11)
 
 include_directories(.)
 
-add_executable(RegexEngine
-        Edge.cpp
-        Edge.h
-        InfixToPostfixConverter.cpp
-        InfixToPostfixConverter.h
-        main.cpp
-        Makefile
-        NFA.cpp
-        NFA.h Engine.cpp Engine.h)
+add_executable(RegexEngine Edge.cpp Edge.h InfixToPostfixConverter.cpp InfixToPostfixConverter.h NFA.cpp NFA.h Engine.cpp Engine.h main.cpp)

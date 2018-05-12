@@ -9,8 +9,6 @@ using namespace std;
 
 int NFA::stateId = 0;
 
-NFA::NFA() = default;
-
 NFA::NFA(int initialState, vector<int> allStates, vector<int> acceptStates, vector<Edge> transitions) {
     this->initialState = initialState;
     this->allStates = allStates;
@@ -23,24 +21,26 @@ void NFA::print() {
     printVector(allStates);
     cout << "Transitions: " << endl;
 
-    for (int i = 0; i < transitions.size(); ++i) {
-        transitions[i].print();
+    for (Edge &transition : transitions) {
+        transition.print();
     }
 }
 
 bool NFA::accepts(string str) {
-    //checks whether this automaton accepts 's'. Implement this method
-    //using given algorithm in project document.
-
+    // Checks whether this automaton accepts the string.
     set<int> nextStates, temp;
     unsigned long current = 0;
 
     while (true) {
+        // Add the initial state to our set of
+        // states that'll be processed next.
         nextStates.insert(initialState);
 
         do {
             temp = nextStates;
 
+            // Add states that can be reached via an epsilon
+            // transition to our next states set.
             for (int i : nextStates) {
                 const vector<int> &closure = epsilonClosure(i);
 
@@ -50,6 +50,8 @@ bool NFA::accepts(string str) {
             }
         } while (temp != nextStates);
 
+        // Check if we're already
+        // in an accepted state.
         vector<int> intersection;
 
         for (int i : temp) {
@@ -64,6 +66,8 @@ bool NFA::accepts(string str) {
             break;
         }
 
+        // Add states that can be reached with
+        // the current character.
         if (current >= str.length()) {
             break;
         }
@@ -79,6 +83,8 @@ bool NFA::accepts(string str) {
             }
         }
 
+        // Check if we're already
+        // in an accepted state.
         intersection.clear();
 
         for (int i : temp) {
@@ -96,6 +102,8 @@ bool NFA::accepts(string str) {
         nextStates = temp;
     }
 
+    // Check if we're already
+    // in an accepted state.
     vector<int> intersection;
 
     for (int i : temp) {
@@ -106,10 +114,13 @@ bool NFA::accepts(string str) {
         }
     }
 
+    // Return true if the string is accepted.
     return !intersection.empty();
 }
 
 vector<int> NFA::epsilonClosure(int state) {
+    // Put every state that can be reached from
+    // the given state via an epsilon closure.
     vector<int> states;
 
     for (Edge transition : transitions) {
@@ -271,50 +282,3 @@ void printVector(const vector<int> &a) {
     cout << a.back() << ']' << endl;
 }
 
-void test(string postFixString) {
-    cout << "Testing..." << endl;
-    cout << endl;
-    cout << "Trying to construct automaton that recognizes: " << endl;
-    cout << "(a|b)*abb" << endl;
-
-    stack<NFA> resultNFA;
-    int index = 0;
-
-    while (index < postFixString.length()) {
-        char character = postFixString[index++];
-
-        if (character == '&') {
-            NFA nfa2 = resultNFA.top();
-            resultNFA.pop();
-            NFA nfa1 = resultNFA.top();
-            resultNFA.pop();
-            resultNFA.push(NFA::concatenate(nfa1, nfa2));
-        } else if (character == '|') {
-            NFA nfa2 = resultNFA.top();
-            resultNFA.pop();
-            NFA nfa1 = resultNFA.top();
-            resultNFA.pop();
-            resultNFA.push(NFA::unionOfNFAs(nfa1, nfa2));
-        } else if (character == '*') {
-            NFA nfa = resultNFA.top();
-            resultNFA.pop();
-            resultNFA.push(NFA::star(nfa));
-        } else {
-            resultNFA.push(NFA::singleSymbol(character));
-        }
-    }
-
-    string testString = "abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbababb";
-
-    if (resultNFA.top().accepts(testString)) {
-        cout << "NFA accepts " << testString << endl;
-    } else {
-        cout << "NFA did not accept " << testString << endl;
-        exit(-1);
-    }
-
-    cout << "All tests passed!" << endl;
-    cout << "Here is the resulting NFA: " << endl;
-    resultNFA.top().print();
-
-}

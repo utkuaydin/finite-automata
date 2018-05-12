@@ -1,5 +1,5 @@
 #ifndef INFIXTOPOSTFIXCONVERTER_H
-#define    INFIXTOPOSTFIXCONVERTER_H
+#define INFIXTOPOSTFIXCONVERTER_H
 
 #include <string>
 #include <cstdlib>
@@ -11,15 +11,17 @@ using namespace std;
 class InfixToPostfixConverter {
 
 public:
-
     InfixToPostfixConverter(string);
 
-    inline string getPosfixExpression() { return postfix; }
+    inline string getPostfixExpression() { return postfix; }
 
 private:
     string regex;
+
     char c;
+
     int cc;
+
     string postfix;
 
     void E();
@@ -33,8 +35,5 @@ private:
     void fatal(const char *);
 };
 
-
-InfixToPostfixConverter testInfixToPostfix(string stringToPostFix);
-
-#endif    /* INFIXTOPOSTFIXCONVERTER_H */
+#endif // INFIXTOPOSTFIXCONVERTER_H
 

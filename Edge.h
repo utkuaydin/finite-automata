@@ -26,7 +26,9 @@ public:
 
 private:
     int sourceState;
+
     int destinationState;
+
     char symbol;
 
     // Instead of epsilon sign we have $, because epsilon is not in ASCII table.
